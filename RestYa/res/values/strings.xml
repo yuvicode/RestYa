@@ -1,0 +1,22 @@
+<resources>
+
+    <string name="app_name">RestYa Twitter Search</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="err_service_unavailable">Service unavailable</string>
+	<string name="err_no_results">No results</string>  
+	<string name="err_not_auth">Sorry, no authorization. try again.</string> 
+	<string name="label_cancel">Cancel</string> 
+	<string name="label_complete">Complete</string>
+	
+	
+	<string name="msg_search_twitter">Search Twitter</string>
+	
+	<string name="rest_service_name_twitter_search">Twitter Search</string> 
+	<string name="rest_provider_name">Twitter</string>
+	
+	<string name="err_no_connection">Sorry,no Internet connection</string>
+	<string name="err_unknown">Sorry, unknown error</string> 
+    <string name="title_activity_list_me">RestYa Demo</string>
+
+</resources>

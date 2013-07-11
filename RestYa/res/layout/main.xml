@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+     <Button android:id="@+id/btnLoginTwitter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Login with Twitter"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_marginTop="30dip"/>
+
+     <LinearLayout
+         android:id="@+id/twitterSearchcontainer"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:visibility="invisible" >
+
+         <EditText
+             android:id="@+id/searchTxt"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="5dp"
+             android:layout_marginTop="15dp"
+             android:ems="10"
+             android:hint="@string/msg_search_twitter" >
+
+             <requestFocus />
+         </EditText>
+
+         <ScrollView
+             android:id="@+id/scrollResults"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="20dp" >
+
+             <LinearLayout
+                 android:id="@+id/resultsContainer"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:gravity="center_vertical"
+                 android:orientation="vertical" >
+             </LinearLayout>
+         </ScrollView>
+
+     </LinearLayout>
+
+    
+
+</LinearLayout>
