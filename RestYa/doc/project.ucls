@@ -233,8 +233,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="26" language="java" name="code.java.restya.TwitterRestSearchActivity" project="RestYa" 
-    file="/RestYa/src/code/java/restya/TwitterRestSearchActivity.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="26" language="java" name="demo.restya.twitter.search.TwitterRestSearchActivity" project="RestYa" 
+    file="/RestYa/src/demo/restya/twitter/search/TwitterRestSearchActivity.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="549" width="221" x="303" y="-177"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -251,8 +251,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="28" language="java" name="code.java.restya.AppGuiceModule" project="RestYa" 
-    file="/RestYa/src/code/java/restya/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="28" language="java" name="demo.restya.twitter.search.AppGuiceModule" project="RestYa" 
+    file="/RestYa/src/demo/restya/twitter/search/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="99" width="119" x="960" y="-177"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

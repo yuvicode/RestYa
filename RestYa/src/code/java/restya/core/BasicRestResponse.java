@@ -7,10 +7,19 @@ package code.java.restya.core;
 public abstract class BasicRestResponse {
 	
 	
-	boolean isSuccess = true;
+	public BasicRestResponse(boolean isSuccess, String errorMsg, int length,
+			boolean hasMore) {
+		super();
+		this.isSuccess = isSuccess;
+		this.errorMsg = errorMsg;
+		this.length = length;
+		this.hasMore = hasMore;
+	}
+
+	boolean isSuccess ;
 	String errorMsg;
-	int length = 0;
-	boolean hasMore= true;
+	int length ;
+	boolean hasMore;
 	
 	public boolean isSuccess() {
 		// TODO Auto-generated method stub

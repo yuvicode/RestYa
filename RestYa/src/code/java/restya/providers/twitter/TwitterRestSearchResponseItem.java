@@ -10,22 +10,32 @@ import code.java.restya.core.RestResponsetServiceItem;
  */
 public class TwitterRestSearchResponseItem extends TwitterRestResponseItem implements RestResponsetServiceItem{
 
-	@Override
-	public String getFieldAsString(String fieldName) {
-		// TODO Auto-generated method stub
-		return null;
+	String id;
+	
+	public TwitterRestSearchResponseItem(String text, Date date, String id) {
+		super(text, date);
+		this.id = id;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public Date getFieldAsDate(String fieldName) {
+	public String getText() {
 		// TODO Auto-generated method stub
-		return null;
+		return text;
 	}
 
 	@Override
-	public int getFieldAsInt(String fieldName) {
+	public Date getDate() {
 		// TODO Auto-generated method stub
-		return 0;
+		return date;
 	}
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+
+	
 
 }

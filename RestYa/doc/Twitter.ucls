@@ -70,8 +70,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="code.java.restya.AppGuiceModule" project="RestYa" 
-    file="/RestYa/src/code/java/restya/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="demo.restya.twitter.search.AppGuiceModule" project="RestYa" 
+    file="/RestYa/src/demo/restya/twitter/search/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="172" y="425"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

@@ -8,4 +8,9 @@ import code.java.restya.core.BasicRestResponse;
  */
 public abstract class TwitterBasicRestResponse extends BasicRestResponse {
 
+	public TwitterBasicRestResponse(boolean isSuccess, String errorMsg,
+			int length, boolean hasMore) {
+		super(isSuccess, errorMsg, length, hasMore);
+	}
+
 }

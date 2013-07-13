@@ -9,7 +9,7 @@ Dev Principles & Patterns:
 To add more services from a different vendor (i.e facebook) developer should:
 
 - Add the service definition to RestListDef.java
-- Provide vendor specific implementation under code.java.listhem.providers
+- Provide vendor specific implementation under code.java.restya.providers
 
 TODO:
 - Implement Twitter RestAuthenticationProvider (all in the activity now...)

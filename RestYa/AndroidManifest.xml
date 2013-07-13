@@ -16,7 +16,7 @@
  
         
         <activity
-            android:name="code.java.restya.TwitterRestSearchActivity"
+            android:name="demo.restya.twitter.search.TwitterRestSearchActivity"
             android:label="@string/title_activity_list_me" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,6 @@
     
      <!-- Permission - Internet Connect -->
     <uses-permission android:name="android.permission.INTERNET" />
-     
-    <!-- Network State Permissions -->
+       <!-- Network State Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

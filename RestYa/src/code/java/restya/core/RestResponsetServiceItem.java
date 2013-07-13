@@ -8,8 +8,8 @@ import java.util.Date;
  */
 public interface RestResponsetServiceItem {
 	
-	public String getFieldAsString(String fieldName);
-	public Date getFieldAsDate(String fieldName);
-	public int getFieldAsInt(String fieldName);
+	public String getText();
+	public Date getDate();
+	public String getId();
 
 }

@@ -1,7 +1,7 @@
 package code.java.restya.core;
 
-import code.java.restya.R;
 import android.content.Context;
+import code.java.restya.R;
 
 /**
  * application error codes and their associated res codes

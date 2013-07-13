@@ -7,7 +7,7 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-
+import android.widget.Toast;
 import code.java.restya.R;
 
 import com.google.inject.Inject;
@@ -18,6 +18,7 @@ public class OauthWebView {
 
 	private Button cancelBtn;
 	private Button completeBtn;
+	private final String oauthProcessStartPage = "file:///android_asset/web/reatya_oauth_init.html";
 	
 
 	Context ctx;
@@ -33,6 +34,10 @@ public class OauthWebView {
 
 		cancelBtn = (Button) view.findViewById(R.id.btnCancel);
 		completeBtn = (Button) view.findViewById(R.id.btnComplete);
+		
+		
+		webWin.loadUrl(oauthProcessStartPage);
+		
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -46,7 +51,10 @@ public class OauthWebView {
 		webWin.setWebViewClient(new WebViewClient() {
 
 			public void onPageFinished(WebView view, String url) {
-
+	
+				if(url.startsWith(endUrl)){
+					completeBtn.setVisibility(View.VISIBLE);
+				}
 			}
 			
 			 @Override
@@ -63,6 +71,9 @@ public class OauthWebView {
 
 			@Override
 			public void onClick(View v) {
+				
+				completeBtn.setVisibility(View.GONE);
+				webWin.loadUrl(oauthProcessStartPage);
 				handler.onFail(webWin.getUrl());
 			}
 		});
@@ -76,42 +87,4 @@ public class OauthWebView {
 		});
 
 	}
-/*
-	private void endOfOauthListener(final String startUrl,
-			final String endSuccessUrl, final OauthSuccessHandler handler) {
-		new Handler().post((new Runnable() {
-
-			@Override
-			public void run() {
-
-				long aouthProcessLength = 1000 * 20;
-				long startProcess = System.currentTimeMillis();
-
-				boolean waiting = true;
-				while (waiting) {
-
-					String endUrl = webWin.getUrl();
-					
-					Log.d("url", endUrl);
-
-					if (endUrl != null && endSuccessUrl.startsWith(endUrl)) {
-						waiting = false;
-						handler.onSuccess(endUrl);
-
-					}
-
-					// stop process
-					if (System.currentTimeMillis() - startProcess > aouthProcessLength
-							&& !startUrl.equals(endSuccessUrl)) {
-						waiting = false;
-						handler.onFail(endUrl);
-					}
-
-				}
-
-			}
-		}));
-
-	}
-*/
 }

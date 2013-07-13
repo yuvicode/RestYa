@@ -155,8 +155,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="18" language="java" name="code.java.restya.AppGuiceModule" project="RestYa" 
-    file="/RestYa/src/code/java/restya/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="18" language="java" name="demo.restya.twitter.search.AppGuiceModule" project="RestYa" 
+    file="/RestYa/src/demo/restya/twitter/search/AppGuiceModule.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="99" width="119" x="4" y="128"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

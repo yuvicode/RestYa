@@ -19,6 +19,8 @@
          android:orientation="vertical"
          android:visibility="invisible" >
 
+    
+
          <EditText
              android:id="@+id/searchTxt"
              android:layout_width="fill_parent"
@@ -31,7 +33,7 @@
              <requestFocus />
          </EditText>
 
-         <ScrollView
+         <demo.restya.twitter.search.TwitterRestScrollView
              android:id="@+id/scrollResults"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"
@@ -44,10 +46,17 @@
                  android:gravity="center_vertical"
                  android:orientation="vertical" >
              </LinearLayout>
-         </ScrollView>
+         </demo.restya.twitter.search.TwitterRestScrollView>
 
      </LinearLayout>
 
-    
+         <ProgressBar
+             android:id="@+id/loadingProgressBar"
+             style="?android:attr/progressBarStyleHorizontal"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:visibility="gone" 
+             android:indeterminate="true"
+             />
 
 </LinearLayout>
