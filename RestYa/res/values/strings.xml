@@ -14,9 +14,12 @@
 	
 	<string name="rest_service_name_twitter_search">Twitter Search</string> 
 	<string name="rest_provider_name">Twitter</string>
-	
-	<string name="err_no_connection">Sorry,no Internet connection</string>
+	<string name="err_user_abort">You have cancelled the process</string>
+	<string name="err_no_connection">Sorry, no Internet connection</string>
 	<string name="err_unknown">Sorry, unknown error</string> 
+	<string name="err_no_page">Sorry, can\'t open the page</string> 
+	
+	
     <string name="title_activity_list_me">RestYa Demo</string>
 
 </resources>

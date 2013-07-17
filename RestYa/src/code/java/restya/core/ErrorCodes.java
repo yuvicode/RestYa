@@ -13,8 +13,9 @@ public enum ErrorCodes {
 	SERVICE_UNAUTHORIZED (R.string.err_not_auth),
 	ERR_UNKNOWN (R.string.err_unknown),
 	ERR_NO_CONNECTION (R.string.err_no_connection),
-	SERVICE_NO_RESULTS(R.string.err_no_results);
-	
+	ERR_PAGE_CANT_DISPLAY (R.string.err_no_page),
+	SERVICE_NO_RESULTS(R.string.err_no_results),
+	USER_ABORT(R.string.err_user_abort);
 	
 	int mErrResId;
 	

@@ -12,12 +12,11 @@ To add more services from a different vendor (i.e facebook) developer should:
 - Provide vendor specific implementation under code.java.restya.providers
 
 TODO:
-- Implement Twitter RestAuthenticationProvider (all in the activity now...)
-- Create Oauth Activity to facilitate OauthWebView
-- Improve OauthWebView for delay time user experience (loading ..)
+- Create optional Oauth Activity to facilitate OauthWebView
+- replace twitter4j as twitter implementation 
 - Provide simple cache mechanism in RestProvider.java
 - Create Guice base factory for the services injection
-- Many more ....
+
 
 
 Enjoy.

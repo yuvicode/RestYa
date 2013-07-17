@@ -4,15 +4,7 @@ import java.util.List;
 
 import roboguice.RoboGuice;
 import roboguice.activity.RoboActivity;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
-import twitter4j.auth.RequestToken;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -27,12 +19,16 @@ import android.widget.TextView;
 import code.java.restya.R;
 import code.java.restya.RestListDef;
 import code.java.restya.app.ui.AppErrorProvider;
-import code.java.restya.app.ui.OauthSuccessHandler;
+import code.java.restya.app.ui.OauthAuthorizeHandler;
+import code.java.restya.app.ui.OauthCallBackUrlHandler;
+import code.java.restya.app.ui.OauthSecretHandler;
 import code.java.restya.app.ui.OauthWebView;
 import code.java.restya.core.ConnectionDetectorProvider;
 import code.java.restya.core.ErrorCodes;
 import code.java.restya.core.RestAsyncRespnseHandler;
+import code.java.restya.core.RestAuthenticationProvider;
 import code.java.restya.core.RestLocalOauthPersistenceProvider;
+import code.java.restya.core.RestOauthSecretVerifier;
 import code.java.restya.core.RestSearchProvider;
 import code.java.restya.providers.twitter.TwitterRestSearchResponseItem;
 import code.java.restya.providers.twitter.TwitterSearchResponse;
@@ -43,26 +39,8 @@ import com.google.inject.util.Modules;
 public class TwitterRestSearchActivity extends RoboActivity implements
 		ScrollResultsDown {
 
-	/**
-	 * deprecated ---- need to move to RestAuthenticationProvider
-	 * */
-	static String PREFERENCE_NAME = "twitter_oauth";
-	static final String PREF_KEY_OAUTH_TOKEN = "oauth_token";
-	static final String PREF_KEY_OAUTH_SECRET = "oauth_token_secret";
-	static final String PREF_KEY_TWITTER_LOGIN = "isTwitterLogedIn";
-
-	/**
-	 * deprecated ---- need to move to RestAuthenticationProvider
-	 * */
-	static final String URL_TWITTER_AUTH = "auth_url";
-	static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
-	static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
-
-	/**
-	 * deprecated ---- need to move to RestAuthenticationProvider
-	 * */
-	private static Twitter twitter;
-	private static RequestToken requestToken;
+	// the service definitions
+	private final RestListDef restyaTwitterDemoServiceDef = RestListDef.TWITTER_SEARCH;
 
 	// Services
 	@Inject
@@ -76,6 +54,11 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 
 	@Inject
 	private RestLocalOauthPersistenceProvider restLocalOauthPersistenceProvider;
+
+	@Inject
+	private RestAuthenticationProvider restAuthenticationProvider;
+
+	private OauthAuthorizeHandler loginHandler;
 
 	private RestAsyncRespnseHandler<TwitterRestSearchResponseItem, TwitterSearchResponse> handler;
 
@@ -93,25 +76,27 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 	EditText searchTxt;
 
 	ProgressBar loadingProgressBar;
-
-	String lastSearch = "";
-
-	// this is used to prevent many events from the
-	boolean isLoadingMore = true;
-
-	int lastResultIndex = 0;
-	
-	final int RESULTS_PAGE_SIZE = 15; 
-
+	// webview for oauth "dance" see -
+	// http://www.cubrid.org/blog/dev-platform/dancing-with-oauth-understanding-how-authorization-works/
 	@Inject
 	OauthWebView oauthWebView;
 
-	// toggle the main view and oauth win during registration process
-	private void toggleViews(View view) {
-		container.removeAllViews();
-		container.addView(view);
-	}
+	// Application logic elements
 
+	String lastSearch = "";
+
+	// this is used to prevent many events from the ScrollView reach bottom
+	boolean isLoadingMore = true;
+	// keep track on results index
+	int lastResultIndex = 0;
+	// results "page: size
+	final int RESULTS_PAGE_SIZE = 15;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see roboguice.activity.RoboActivity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -123,6 +108,14 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 
 		super.onCreate(savedInstanceState);
 
+		// define your service attributes
+		restyaTwitterDemoServiceDef.setOAuthConsumerKey("6YJCS09S2ULtdvYWsXDg");
+		restyaTwitterDemoServiceDef
+				.setOauthConsumerSecret("oos1HBsFLcjh0lPqG3y8wuzucH3e91I8l3kUuZ8FBdA");
+		// url for the end of the process
+		restyaTwitterDemoServiceDef
+				.setCallBackUrl("https://sites.google.com/site/twitterdemopage/");
+
 		mainView = getLayoutInflater().inflate(R.layout.main, null);
 
 		oauthWin = getLayoutInflater().inflate(R.layout.oauth_web_view, null);
@@ -133,6 +126,7 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 		container = (FrameLayout) findViewById(R.id.main_area);
 
 		btnLoginTwitter = (Button) mainView.findViewById(R.id.btnLoginTwitter);
+		
 		twitterSearchcontainer = (LinearLayout) mainView
 				.findViewById(R.id.twitterSearchcontainer);
 
@@ -146,18 +140,119 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 
 		TwitterRestScrollView scrollResults = (TwitterRestScrollView) mainView
 				.findViewById(R.id.scrollResults);
-		// set handler
+		// Set handler for scroll to bottom
 		scrollResults.setScrollResultsDown(this);
 
+		// set the default view
 		toggleViews(mainView);
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+		// Internet connection check
 		if (!cd.isConnectingToInternet()) {
 			appErrorProvider.showError(this, ErrorCodes.ERR_NO_CONNECTION);
 		}
+		else{
+			if(restAuthenticationProvider.isLoggedIn(restyaTwitterDemoServiceDef)){
+				twitterSearchcontainer.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				btnLoginTwitter.setVisibility(View.VISIBLE);
+			}
+		}
 
-		// search results handler
+		
+				
+		/*
+		 * Handler for verify the token - last oauth step
+		 * This will enable UI interaction as a result of the last step of oauth process
+		 * user token and secret are stored using the RestLocalOauthPersistenceProvider in the 
+		 * implementation of RestOauthSecretVerifier
+		 */
+		final OauthSecretHandler verifyHandler = new OauthSecretHandler() {
+
+			@Override
+			public void onSuccess() {
+				btnLoginTwitter.setVisibility(View.GONE);
+				twitterSearchcontainer.setVisibility(View.VISIBLE);
+				toggleViews(mainView);
+
+			}
+
+			@Override
+			public void onFail(ErrorCodes error) {
+				if (error != ErrorCodes.USER_ABORT)
+					appErrorProvider.showError(TwitterRestSearchActivity.this,
+							error);
+				btnLoginTwitter.setVisibility(View.VISIBLE);
+				twitterSearchcontainer.setVisibility(View.GONE);
+				toggleViews(mainView);
+
+			}
+
+		};
+
+		/* handler for login (first step authorization)
+		 * the (success) results are sent to the UI for oauth "dance" in the webview (or other UI implementation)
+		 * The returned RestOauthSecretVerifier implementation will be used after the the webview step 
+		 * to verify and sore the the user token an secret 
+		 * 
+		 */
+		loginHandler = new OauthAuthorizeHandler() {
+
+			@Override
+			public void onSuccess(final String url,
+					final RestOauthSecretVerifier verify) {
+
+				oauthWebView.start(url,
+						restyaTwitterDemoServiceDef.getCallBackUrl(),
+					/* handler for the web view  - second step handler
+					 * Results (success) are sent to the  RestOauthSecretVerifier to complete the process 
+					 */
+					new OauthCallBackUrlHandler() {
+
+							@Override
+							public void onSuccess(String tokenUrl) {
+								btnLoginTwitter.setVisibility(View.GONE);
+								toggleViews(mainView);
+								verify.verify( tokenUrl, verifyHandler);
+
+							}
+
+							@Override
+							public void onFail(ErrorCodes error) {
+
+								if (error != ErrorCodes.USER_ABORT)
+									appErrorProvider.showError(
+											TwitterRestSearchActivity.this,
+											error);
+
+								toggleViews(mainView);
+
+							}	
+
+						});
+			}
+
+			@Override
+			public void onFail(ErrorCodes error) {
+
+				toggleViews(mainView);
+				
+				if (error != ErrorCodes.USER_ABORT)
+					appErrorProvider.showError(TwitterRestSearchActivity.this,
+							error);
+				
+				
+			}
+		};
+
+		
+		
+		
+		
+		// search results handler to perform for REST call results
 		handler = new RestAsyncRespnseHandler<TwitterRestSearchResponseItem, TwitterSearchResponse>() {
 
 			@Override
@@ -176,8 +271,8 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 
 				List<TwitterRestSearchResponseItem> items = response.getItems();
 
-				lastResultIndex = lastResultIndex  + items.size();
-				
+				lastResultIndex = lastResultIndex + items.size();
+
 				for (TwitterRestSearchResponseItem item : items) {
 
 					FrameLayout frame = (FrameLayout) getLayoutInflater()
@@ -189,16 +284,17 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 
 					resultsContainer.addView(frame);
 
-					
 				}
-				isLoadingMore = false;
+				// can reload more ...
+				isLoadingMore = !response.hasMore();
 			}
 		};
-		// set params to search service
-		searchProvider.setDef(RestListDef.TWITTER_SEARCH, handler, false);
+		// Set params to search service
+		searchProvider.setDef(restyaTwitterDemoServiceDef, handler, false);
 
 		/**
-		 * Twitter login button click event will call loginToTwitter() function
+		 * Login button click
+		 * 
 		 * */
 		btnLoginTwitter.setOnClickListener(new View.OnClickListener() {
 
@@ -208,11 +304,24 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 				if (!cd.isConnectingToInternet()) {
 					appErrorProvider.showError(TwitterRestSearchActivity.this,
 							ErrorCodes.ERR_NO_CONNECTION);
-				} else
-					loginToTwitter();
+				} else {
+					toggleViews(oauthWin);
+
+					restAuthenticationProvider.login(
+							restyaTwitterDemoServiceDef, loginHandler);
+
+				}
+
 			}
 		});
 
+		/*
+		 * Handling the user input in the search box
+		 * 
+		 * If string has changed ... new search
+		 * 
+		 * If no change (space, or delete a space) then ignore...
+		 */
 		TextWatcher inputTextWatcher = new TextWatcher() {
 			public void afterTextChanged(Editable s) {
 			}
@@ -231,7 +340,8 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 						resultsContainer.removeAllViews();
 						loadingProgressBar.setVisibility(View.VISIBLE);
 						lastResultIndex = 0;
-						searchProvider.search(str,lastResultIndex, RESULTS_PAGE_SIZE);
+						searchProvider.search(str, lastResultIndex,
+								RESULTS_PAGE_SIZE);
 					}
 
 				}
@@ -239,154 +349,19 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 			}
 		};
 		searchTxt.addTextChangedListener(inputTextWatcher);
+		
+		
+		
 
 	}
 
-	/**
-	 * deprecated ---- need to move to RestAuthenticationProvider
-	 * */
-	private void setTokenAndSecret(String url) {
-		// Uri uri = getIntent().getData();
-
-		final Uri uri = Uri.parse(url);
-		if (uri != null
-				&& uri.toString().startsWith(
-						RestListDef.TWITTER_SEARCH.getCallBackUrl())) {
-			// oAuth verifier
-
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-
-					try {
-						String verifier = uri
-								.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);
-						// Get the access token
-
-						btnLoginTwitter.setVisibility(View.GONE);
-
-						final AccessToken accessToken = twitter
-								.getOAuthAccessToken(requestToken, verifier);
-
-						runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-
-								restLocalOauthPersistenceProvider
-										.setOauthSecret(
-												RestListDef.TWITTER_SEARCH,
-												accessToken.getTokenSecret());
-								restLocalOauthPersistenceProvider
-										.setOauthToken(
-												RestListDef.TWITTER_SEARCH,
-												accessToken.getToken());
-
-								twitterSearchcontainer
-										.setVisibility(View.VISIBLE);
-
-							}
-						});
-
-					} catch (Exception e) {
-						runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-
-								btnLoginTwitter.setVisibility(View.VISIBLE);
-								twitterSearchcontainer.setVisibility(View.GONE);
-
-							}
-						});
-					}
-
-				}
-			}).start();
-
-		}
+	// toggle the main view and oauth win during "registration" process
+	private void toggleViews(View view) {
+		container.removeAllViews();
+		container.addView(view);
 	}
 
-	/**
-	 * deprecated ---- need to move to RestAuthenticationProvider
-	 * */
-
-	private void loginToTwitter() {
-		// Check if already logged in
-
-		toggleViews(oauthWin);
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				ConfigurationBuilder builder = new ConfigurationBuilder();
-				builder.setOAuthConsumerKey(RestListDef.TWITTER_SEARCH
-						.getOAuthConsumerKey());
-				builder.setOAuthConsumerSecret(RestListDef.TWITTER_SEARCH
-						.getOauthConsumerSecret());
-				Configuration configuration = builder.build();
-
-				TwitterFactory factory = new TwitterFactory(configuration);
-				twitter = factory.getInstance();
-
-				try {
-					requestToken = twitter
-							.getOAuthRequestToken(RestListDef.TWITTER_SEARCH
-									.getCallBackUrl());
-
-					runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-
-							oauthWebView.start(
-									requestToken.getAuthenticationURL(),
-									RestListDef.TWITTER_SEARCH.getCallBackUrl(),
-									new OauthSuccessHandler() {
-
-										@Override
-										public void onSuccess(String param) {
-											toggleViews(mainView);
-											setTokenAndSecret(param);
-										}
-
-										@Override
-										public void onFail(String param) {
-
-											toggleViews(mainView);
-
-										}
-
-									});
-
-						}
-					});
-
-				} catch (TwitterException e) {
-					runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							toggleViews(mainView);
-
-						}
-					});
-
-					e.printStackTrace();
-				}
-
-			}
-		}).start();
-
-	}
-
-	protected void onResume() {
-		super.onResume();
-	}
-
-	// scroll reach bottom
+	// Scroll results reach bottom
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -397,12 +372,16 @@ public class TwitterRestSearchActivity extends RoboActivity implements
 	@Override
 	public void onBottomReach() {
 
-		if (!isLoadingMore)
-		{
+		if (!isLoadingMore) {
 			loadingProgressBar.setVisibility(View.VISIBLE);
-			searchProvider.search(lastSearch,lastResultIndex , RESULTS_PAGE_SIZE);
+			searchProvider.search(lastSearch, lastResultIndex,
+					RESULTS_PAGE_SIZE);
 		}
-		
+
+	}
+
+	protected void onResume() {
+		super.onResume();
 	}
 
 }

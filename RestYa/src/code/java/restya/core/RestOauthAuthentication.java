@@ -1,11 +1,13 @@
 package code.java.restya.core;
 
 import code.java.restya.RestListDef;
+import code.java.restya.app.ui.OauthAuthorizeHandler;
 
 import com.google.inject.Inject;
 
 /**
- * OAuth implementation for rest services 
+ * General OAuth implementation for rest services.
+ * TODO: implement with Android SDK tools 
  *
  */
 public class RestOauthAuthentication implements RestAuthenticationProvider {
@@ -19,16 +21,12 @@ public class RestOauthAuthentication implements RestAuthenticationProvider {
 	
 	
 
-	@Override
-	public boolean login(RestListDef restDef) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 
 	@Override
-	public boolean logOut(RestListDef restDef) {
+	public void forget(RestListDef restDef) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 
 	@Override
@@ -36,5 +34,19 @@ public class RestOauthAuthentication implements RestAuthenticationProvider {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
+
+
+
+	@Override
+	public void login(RestListDef restDef, OauthAuthorizeHandler authorization) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
 
 }

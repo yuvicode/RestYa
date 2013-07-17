@@ -287,8 +287,8 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="32" language="java" name="code.java.restya.app.ui.OauthSuccessHandler" project="RestYa" 
-    file="/RestYa/src/code/java/restya/app/ui/OauthSuccessHandler.java" binary="false" corner="BOTTOM_RIGHT">    
+  <interface id="32" language="java" name="code.java.restya.app.ui.OauthCallBackUrlHandler" project="RestYa" 
+    file="/RestYa/src/code/java/restya/app/ui/OauthCallBackUrlHandler.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="99" width="152" x="1860" y="344"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

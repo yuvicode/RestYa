@@ -28,7 +28,7 @@ class SearchTwitter extends AsyncTask<String, String, String> {
 	
 	RestLocalOauthPersistenceProvider mPersist;
 	
-	ErrorCodes error;
+	ErrorCodes error = ErrorCodes.ERR_UNKNOWN;
 	
 	
 	
@@ -70,8 +70,8 @@ class SearchTwitter extends AsyncTask<String, String, String> {
     		QueryResult result = null;
     		
     		result = twitter.search(query);
-    		
-    		response = new TwitterSearchResponse(true, "",result.getTweets().size(), true);
+    	
+    		response = new TwitterSearchResponse(true, "",result.getTweets().size(), result.hasNext());
     			if(result !=null)
     				for (twitter4j.Status status  :  result.getTweets()) {
     					
@@ -83,9 +83,11 @@ class SearchTwitter extends AsyncTask<String, String, String> {
     		} catch (TwitterException e) {
     			hasError = true;
     			error = ErrorCodes.SERVICE_UNAUTHORIZED;
-    			Log.d(SearchTwitter.class.getSimpleName(), e.getErrorMessage());
+    			if(e!=null && e.getErrorMessage()!=null && e.getErrorMessage().length() > 0)
+    				Log.d(SearchTwitter.class.getSimpleName(), e.getErrorMessage());
     			
     		} catch (Exception e) {
+    			if(e!=null && e.getMessage() !=null && e.getMessage().length() > 0)
     			Log.d(SearchTwitter.class.getSimpleName(), e.getMessage());
 
     			hasError = true;

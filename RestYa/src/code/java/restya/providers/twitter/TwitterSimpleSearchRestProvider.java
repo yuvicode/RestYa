@@ -10,6 +10,10 @@ import code.java.restya.core.RestSearchProvider;
 import com.google.inject.Inject;
 
 
+/**
+ * implementation for Twitter search
+ *
+ */
 public class TwitterSimpleSearchRestProvider extends TwitterRestProvider
 		implements
 		RestSearchProvider<TwitterRestSearchResponseItem, TwitterSearchResponse> {

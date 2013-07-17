@@ -4,13 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-     <Button android:id="@+id/btnLoginTwitter"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Login with Twitter"
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_marginTop="30dip"/>
+     <Button
+         android:id="@+id/btnLoginTwitter"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="10dip"
+         android:layout_marginRight="10dip"
+         android:text="Login with Twitter"
+         android:visibility="invisible" />
 
      <LinearLayout
          android:id="@+id/twitterSearchcontainer"

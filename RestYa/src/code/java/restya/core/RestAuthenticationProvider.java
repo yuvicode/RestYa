@@ -1,16 +1,17 @@
 package code.java.restya.core;
 
 import code.java.restya.RestListDef;
+import code.java.restya.app.ui.OauthAuthorizeHandler;
 
 /**
- *Authentication for rest services
+ *Authentication service for rest providers, based on oauth
  *
  */
 public interface RestAuthenticationProvider {
 	
-	public boolean login(RestListDef restDef);
+	public void login(RestListDef restDef, OauthAuthorizeHandler authorization);
 	
-	public boolean logOut(RestListDef restDef);
+	public void forget(RestListDef restDef);
 	
 	public boolean isLoggedIn(RestListDef restDef);
 

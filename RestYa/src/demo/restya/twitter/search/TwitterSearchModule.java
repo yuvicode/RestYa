@@ -8,9 +8,9 @@ import code.java.restya.core.RestAuthenticationProvider;
 import code.java.restya.core.RestLocalOauthPersistenceProvider;
 import code.java.restya.core.RestLocalOauthSharedPrefPersistence;
 import code.java.restya.core.RestLocalPersistenceProvider;
-import code.java.restya.core.RestOauthAuthentication;
 import code.java.restya.core.RestSearchProvider;
 import code.java.restya.core.RestSharedPrefsPersistence;
+import code.java.restya.providers.twitter.TwitterRestOauthAuthentication;
 import code.java.restya.providers.twitter.TwitterRestSearchResponseItem;
 import code.java.restya.providers.twitter.TwitterSearchResponse;
 import code.java.restya.providers.twitter.TwitterSimpleSearchRestProvider;
@@ -38,8 +38,9 @@ public class TwitterSearchModule  extends AbstractModule {
 	// oauth params persistence
 	bind(RestLocalOauthPersistenceProvider.class).to(RestLocalOauthSharedPrefPersistence.class);
 	
-	// oauth authentication
-	bind(RestAuthenticationProvider.class).to(RestOauthAuthentication.class);
+	// oauth authentication - implemented by Twitter
+	// TODO : replace with  Guice factory to support few RestAuthenticationProvider in one application
+	bind(RestAuthenticationProvider.class).to(TwitterRestOauthAuthentication.class);
 	
 
 	// the REST search service to the twitter implementation 

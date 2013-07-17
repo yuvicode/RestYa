@@ -8,8 +8,13 @@ import code.java.restya.core.RestMetods;
  */
 public enum RestListDef {
 	
-TWITTER_SEARCH(RestProviders.TWITTER,"https://api.twitter.com/1.1/search/tweets.json",
-		RestMetods.GET,R.string.rest_service_name_twitter_search,"6YJCS09S2ULtdvYWsXDg","oos1HBsFLcjh0lPqG3y8wuzucH3e91I8l3kUuZ8FBdA","https://sites.google.com/site/twitterdemopage/");
+TWITTER_SEARCH(RestProviders.TWITTER,
+		"https://api.twitter.com/1.1/search/tweets.json",
+		RestMetods.GET,
+		R.string.rest_service_name_twitter_search,
+		"",
+		"",
+		"");
 
 private String mOAuthConsumerKey;
 private String mOauthConsumersecret;
@@ -17,6 +22,10 @@ private String mUri;
 private RestMetods mMethod;
 int mTitleResId;
 private String mCallBackUrl;
+public void setCallBackUrl(String mCallBackUrl) {
+	this.mCallBackUrl = mCallBackUrl;
+}
+
 RestProviders mRestProviders;
 
 
@@ -43,9 +52,17 @@ public RestMetods getmMethod() {
 
 
 
+public void setOAuthConsumerKey(String key){
+	mOAuthConsumerKey = key;
+}
 
 public String getOAuthConsumerKey() {
 	return mOAuthConsumerKey;
+}
+
+
+public void setOauthConsumerSecret(String secret) {
+	 mOauthConsumersecret = secret;
 }
 
 public String getOauthConsumerSecret() {
